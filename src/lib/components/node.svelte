@@ -5,10 +5,10 @@
 
 	export let pos: Coordinate;
 	export let graph: Graph;
-    let tile: Tile = Tile.Empty;
+	let tile: Tile = Tile.Empty;
 	$: {
-        tile = $dataStore.nodes[pos.y][pos.x].tile;
-    }
+		tile = $dataStore.nodes[pos.y][pos.x].tile;
+	}
 	$: active_class =
 		tile == Tile.Wall
 			? 'wall'
@@ -19,8 +19,8 @@
 					: tile == Tile.Expanded
 						? 'expanded'
 						: tile == Tile.Path
-                            ? 'path'
-                            : '';
+							? 'path'
+							: '';
 
 	// handle mouse for dragging
 	$: mouseDown = false;
@@ -42,19 +42,19 @@
 			}
 		}
 	}
-
 </script>
 
 {#key tile}
 	<td
-		class={active_class}
 		on:mousemove={() => {
 			updateNode(false);
 		}}
 		on:mousedown={() => {
 			updateNode(true);
 		}}
-	/>
+	>
+		<div class={active_class}></div>
+	</td>
 {/key}
 
 <style>
@@ -64,6 +64,7 @@
 		width: 26px;
 		height: 25px;
 		transition: 70ms ease-in-out;
+		padding: 0;
 	}
 
 	td:hover {
@@ -72,21 +73,58 @@
 
 	.wall {
 		background-color: #1f1f1f;
+		width: 100%;
+		height: 100%;
+		animation: grow 150ms ease-in-out forwards;
 	}
 
 	.start {
 		background-color: #32a852;
+		width: 100%;
+		height: 100%;
 	}
 
 	.end {
 		background-color: #820808;
+		width: 100%;
+		height: 100%;
 	}
 
 	.expanded {
 		background-color: #2368d9;
+		animation: grow 500ms ease-in-out forwards,
+            expandFade 800ms ease-in-out 200ms forwards;
 	}
 
-    .path {
-        background-color: #e6db43;
-    }
+	.path {
+		background-color: #e6db43;
+		animation: grow 500ms ease-in-out forwards;
+	}
+
+	div {
+		margin: auto auto;
+		border-collapse: collapse;
+	}
+
+	@keyframes grow {
+		from {
+			width: 0;
+			height: 0;
+			opacity: 0;
+		}
+		to {
+			width: 100%;
+			height: 100%;
+			opacity: 100%;
+		}
+	}
+
+	@keyframes expandFade {
+		from {
+			background-color: #a016e0;
+		}
+		to {
+			background-color: #079ef5;
+		}
+	}
 </style>

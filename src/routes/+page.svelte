@@ -67,6 +67,6 @@
 		display: flex;
 		flex-direction: column;
 		justify-content: space-between;
-		height: 96vh;
+		height: 90vh;
 	}
 </style>
