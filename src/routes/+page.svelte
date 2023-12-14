@@ -12,7 +12,7 @@
 	function runAnimation(algo: Algorithm) {
 		let result: Array<GridNode> = run(algo);
 
-		loopAnim(result, 50, 0);
+		loopAnim(result, 15, 0);
 	}
 
 	// sets expanded tiles and draws at a delay (in ms)
@@ -27,7 +27,7 @@
                 }
 			} else {
                 if (nodes[nodes.length - 1].tile == Tile.End) {
-                    animPath(nodes[nodes.length - 1], 25);
+                    animPath(nodes[nodes.length - 1], 5);
                 }
             }
 		}, delay);
