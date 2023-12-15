@@ -43,9 +43,9 @@ export type GridNode = {
 // (re)initialize the graph -> wipes data on resize
 export function initGraph(windowWidth: number, windowHeight: number): Graph {
     graph.nodes = [];
-    for (let i = 0; i < Math.floor(windowHeight / 35); i++) {
+    for (let i = 0; i < Math.floor(windowHeight / 38); i++) {
         graph.nodes.push([]);
-        for (let j = 0; j < Math.floor(windowWidth / 26); j++) {
+        for (let j = 0; j < Math.floor(windowWidth / 32); j++) {
             graph.nodes[i].push({ tile: Tile.Empty, xy: { x: j, y: i }, parent: undefined });
         }
     }

@@ -62,7 +62,7 @@
 		border: 1px solid #757575;
 		margin: 0;
 		width: 26px;
-		height: 25px;
+		height: 30px;
 		transition: 70ms ease-in-out;
 		padding: 0;
 	}
