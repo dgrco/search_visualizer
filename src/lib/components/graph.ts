@@ -15,10 +15,21 @@ export enum Tile {
     Path
 }
 
+export type SelectedTile = {
+    tile: Tile;
+}
+
 // Subscribable graph data for node updating
 export const dataStore = writable(graph);
 export const updateData = (newData: Graph) => {
     dataStore.set(newData)
+}
+
+// Handles tile selection
+let selectedTile: SelectedTile = {tile: Tile.Wall};
+export const tileStore = writable(selectedTile);
+export const updateSelectedTile = (newTile: SelectedTile) => {
+    tileStore.set(newTile);
 }
 
 export type Graph = {
@@ -43,18 +54,28 @@ export type GridNode = {
 // (re)initialize the graph -> wipes data on resize
 export function initGraph(windowWidth: number, windowHeight: number): Graph {
     graph.nodes = [];
-    for (let i = 0; i < Math.floor(windowHeight / 38); i++) {
+    let heightDiv = windowWidth < 768 ? 44 : 38;
+    let widthDiv = windowHeight < 768 ? 40 : 32;
+    for (let i = 0; i < Math.floor(windowHeight / heightDiv); i++) {
         graph.nodes.push([]);
-        for (let j = 0; j < Math.floor(windowWidth / 32); j++) {
+        for (let j = 0; j < Math.floor(windowWidth / widthDiv); j++) {
             graph.nodes[i].push({ tile: Tile.Empty, xy: { x: j, y: i }, parent: undefined });
         }
     }
 
     if (graph.nodes.length > 0) {
-        graph.nodes[0][0].tile = Tile.Start;
-        graph.nodes[graph.nodes.length - 1][graph.nodes[0].length - 1].tile = Tile.End;
-        graph.start = {x: 0, y: 0};
-        graph.end = {x: graph.nodes[0].length - 1, y: graph.nodes.length - 1}
+        let start = {
+            x: Math.floor((graph.nodes[0].length - 1) / 2),
+            y: Math.floor((graph.nodes.length - 1) / 2)
+        };
+        let end = {
+            x: graph.nodes[0].length - 1,
+            y: graph.nodes.length - 1
+        };
+        graph.nodes[start.y][start.x].tile = Tile.Start;
+        graph.nodes[end.y][end.x].tile = Tile.End;
+        graph.start = start;
+        graph.end = end
     }
 
     updateData(graph);
@@ -83,6 +104,11 @@ export function setWall(pos: Coordinate) {
     graph.nodes[pos.y][pos.x].tile = Tile.Wall;
 }
 
+// sets a cell to become empty
+export function setEmpty(pos: Coordinate) {
+    graph.nodes[pos.y][pos.x].tile = Tile.Empty;
+}
+
 // get node at position pos
 export function getNode(pos: Coordinate): GridNode {
     return graph.nodes[pos.y][pos.x];
@@ -98,9 +124,23 @@ export function getStart() {
     return graph.nodes[graph.start.y][graph.start.x];
 }
 
+// sets the start position
+export function setStart(pos: Coordinate) {
+    setTile(getStart().xy, Tile.Empty);
+    graph.start = pos;
+    setTile(pos, Tile.Start);
+}
+
 // returns xy of end node
 export function getEnd() {
     return graph.nodes[graph.end.y][graph.end.x];
+}
+
+// sets the end position
+export function setEnd(pos: Coordinate) {
+    setTile(getEnd().xy, Tile.Empty);
+    graph.end = pos;
+    setTile(pos, Tile.End);
 }
 
 // return the number of rows
@@ -115,7 +155,7 @@ export function getCols() {
 
 // get all surrounding neighbours of node
 export function getNeighbours(node: GridNode): Array<GridNode> {
-    let {x, y} = node.xy;
+    let { x, y } = node.xy;
     let neighbours: Array<GridNode> = [];
     if (x == 0) {
         neighbours.push(getNodeXY(x + 1, y));

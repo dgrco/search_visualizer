@@ -1,13 +1,15 @@
 <script lang="ts">
 	import type { Coordinate } from './graph';
-	import { Tile, setWall, dataStore } from './graph';
+	import { Tile, setWall, dataStore, tileStore, setStart, setEnd, setEmpty } from './graph';
 	import type { Graph } from './graph';
 
 	export let pos: Coordinate;
 	export let graph: Graph;
 	let tile: Tile = Tile.Empty;
+    let selectedTile: Tile = Tile.Wall;
 	$: {
 		tile = $dataStore.nodes[pos.y][pos.x].tile;
+        selectedTile = $tileStore.tile;
 	}
 	$: active_class =
 		tile == Tile.Wall
@@ -20,7 +22,9 @@
 						? 'expanded'
 						: tile == Tile.Path
 							? 'path'
-							: '';
+							: tile == Tile.Empty
+                                ? 'empty'
+                                : '';
 
 	// handle mouse for dragging
 	$: mouseDown = false;
@@ -37,9 +41,22 @@
 	function updateNode(ignore_event: boolean) {
 		if (mouseDown || ignore_event) {
 			if (tile == Tile.Empty) {
-				tile = Tile.Wall;
-				setWall(pos);
-			}
+                if (selectedTile == Tile.Wall) {
+				    tile = Tile.Wall;
+				    setWall(pos);
+                } else if (selectedTile == Tile.Start) {
+                    tile = Tile.Start
+                    setStart(pos);
+                } else if (selectedTile == Tile.End) {
+                    tile = Tile.End;
+                    setEnd(pos);
+                } 
+			} else if (tile == Tile.Wall) {
+                if (selectedTile == Tile.Empty) {
+                    tile = Tile.Empty;
+                    setEmpty(pos);
+                }
+            }
 		}
 	}
 </script>
@@ -77,17 +94,26 @@
 		height: 100%;
 		animation: grow 150ms ease-in-out forwards;
 	}
+	
+    .empty {
+		background-color: white;
+		width: 100%;
+		height: 100%;
+		animation: grow 150ms ease-in-out forwards;
+	}
 
 	.start {
 		background-color: #32a852;
 		width: 100%;
 		height: 100%;
+		animation: grow 150ms ease-in-out forwards;
 	}
 
 	.end {
 		background-color: #820808;
 		width: 100%;
 		height: 100%;
+		animation: grow 150ms ease-in-out forwards;
 	}
 
 	.expanded {
