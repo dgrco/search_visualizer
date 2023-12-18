@@ -23,6 +23,7 @@
 	function runAnimation() {
 		if (status == 'Reset') {
 			status = 'Start';
+            clearBoard();
 			return;
 		}
 		let result: Array<GridNode> = run(selectedAlgorithm);
