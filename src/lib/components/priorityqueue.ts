@@ -22,7 +22,7 @@ export default class PriorityQueue {
         let searchNode: SearchNode = { node: x, gCost, hCost, fCost: gCost + hCost };
 
         for (let i = 0; i < this.data.length; i++) {
-            if (this.data[i].fCost > (gCost + hCost)) {
+            if (this.data[i].fCost >= (gCost + hCost)) {
                 // splice by deleting 0 elements => an insert at index i
                 this.data.splice(i, 0, searchNode);
                 return;
