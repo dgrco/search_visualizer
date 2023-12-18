@@ -76,7 +76,7 @@
 
 <style>
 	td {
-		border: 1px solid #757575;
+		border: 1px solid #5194a8;
 		margin: 0;
 		width: 26px;
 		height: 30px;
@@ -117,14 +117,18 @@
 	}
 
 	.expanded {
-		background-color: #2368d9;
-		animation: grow 500ms ease-in-out forwards,
-            expandFade 800ms ease-in-out 200ms forwards;
+		animation: grow 900ms ease-in-out forwards,
+            expandFade 1.2s ease-in-out 200ms forwards;
 	}
 
+    td:has(.path), td:has(.wall), td:has(.start), td:has(.end) {
+        border: none;
+    }
+
 	.path {
-		background-color: #e6db43;
-		animation: grow 500ms ease-in-out forwards;
+		background-color: #f0e962;
+		animation: grow 400ms ease-in-out forwards;
+        border: none;
 	}
 
 	div {
@@ -135,22 +139,24 @@
 	@keyframes grow {
 		from {
 			width: 0;
+            border-radius: 100px;
 			height: 0;
 			opacity: 0;
 		}
 		to {
 			width: 100%;
 			height: 100%;
+            border-radius: 0;
 			opacity: 100%;
 		}
 	}
 
 	@keyframes expandFade {
 		from {
-			background-color: #a016e0;
+			background-color: rgba(131, 79, 214, 0.9);
 		}
 		to {
-			background-color: #079ef5;
+			background-color: rgba(79, 187, 214, 0.6);
 		}
 	}
 </style>

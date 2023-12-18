@@ -24,7 +24,7 @@
 	function runAnimation() {
 		let result: Array<GridNode> = run(selectedAlgorithm);
 
-		loopAnim(result, 15, 0);
+		loopAnim(result, 35, 0);
 	}
 
     // set selected tile
@@ -44,7 +44,7 @@
 				}
 			} else {
 				if (nodes[nodes.length - 1].tile == Tile.End) {
-					animPath(nodes[nodes.length - 1], 5);
+					animPath(nodes[nodes.length - 1], 15);
 				}
 			}
 		}, delay);
