@@ -5,9 +5,7 @@
 		type GridNode,
 		Tile,
 		updateSelectedTile,
-
 		tileStore
-
 	} from '$lib/components/graph';
 	import Graph from '$lib/components/graph.svelte';
 	import { Algorithm, run } from '$lib/components/pathfinding';
@@ -18,22 +16,32 @@
 
 	$: (width, height), (graph = initGraph(width, height));
 
-    $: selectedAlgorithm = Algorithm.BFS;
+	$: selectedAlgorithm = Algorithm.BFS;
+	$: status = 'Start';
 
 	// runs the search animation
 	function runAnimation() {
+		if (status == 'Reset') {
+			status = 'Start';
+			return;
+		}
 		let result: Array<GridNode> = run(selectedAlgorithm);
+		status = 'Reset';
 
 		loopAnim(result, 35, 0);
 	}
 
-    // set selected tile
-    function setSelectedTile(tile: Tile) {
-        updateSelectedTile({tile});
-    }
+	// set selected tile
+	function setSelectedTile(tile: Tile) {
+		updateSelectedTile({ tile });
+	}
 
 	// sets expanded tiles and draws at a delay (in ms)
 	function loopAnim(nodes: Array<GridNode>, delay: number, index: number) {
+		if (status == 'Start') {
+			clearBoard();
+			return;
+		}
 		setTimeout(() => {
 			if (index < nodes.length) {
 				if (nodes[index].tile == Tile.Empty) {
@@ -50,7 +58,7 @@
 		}, delay);
 	}
 
-	// animate the final path from index
+	// animate the final path (note the final node must be the end node)
 	function animPath(node: GridNode, delay: number) {
 		setTimeout(() => {
 			if (node.tile == Tile.Expanded) {
@@ -66,23 +74,34 @@
 			}
 		}, delay);
 	}
+
+	function clearBoard() {
+		graph = initGraph(width, height);
+	}
 </script>
 
 <svelte:window bind:innerWidth={width} bind:innerHeight={height} />
 
 <div class="app">
 	<div class="controls">
-        <div class="tiles">
+		<div class="tiles">
 			{#key selectedAlgorithm}
 				<div class={'algoBtn ' + (selectedAlgorithm == Algorithm.BFS ? 'selected' : '')}>
-					<button class="tile wall" on:click={() => selectedAlgorithm = Algorithm.BFS}>Breadth-First Search</button>
+					<button class="tile wall" on:click={() => (selectedAlgorithm = Algorithm.BFS)}>BFS</button
+					>
+				</div>
+				<div class={'algoBtn ' + (selectedAlgorithm == Algorithm.DFS ? 'selected' : '')}>
+					<button class="tile wall" on:click={() => (selectedAlgorithm = Algorithm.DFS)}>DFS</button
+					>
 				</div>
 				<div class={'algoBtn ' + (selectedAlgorithm == Algorithm.A_STAR ? 'selected' : '')}>
-					<button class="tile wall" on:click={() => selectedAlgorithm = Algorithm.A_STAR}>A* Search</button>
+					<button class="tile wall" on:click={() => (selectedAlgorithm = Algorithm.A_STAR)}
+						>A*</button
+					>
 				</div>
 			{/key}
 		</div>
-		<button class="visualize" on:click={() => runAnimation()}>Start</button>
+		<button class="visualize" on:click={() => runAnimation()}>{status}</button>
 		<div class="tiles">
 			{#key $tileStore}
 				<div class={'tileBtn ' + ($tileStore.tile == Tile.Wall ? 'selected' : '')}>
@@ -115,8 +134,8 @@
 
 	.tiles {
 		display: flex;
-        justify-content: center;
-        margin: 0 1rem;
+		justify-content: center;
+		margin: 0 2rem;
 	}
 
 	.tile {
@@ -141,14 +160,14 @@
 		color: white;
 	}
 
-    .floor {
-        background-color: #d1d1d1;
-    }
+	.floor {
+		background-color: #d1d1d1;
+	}
 
-    .end {
-        background-color: #820808;
-        color: white;
-    }
+	.end {
+		background-color: #820808;
+		color: white;
+	}
 
 	.selected {
 		border: 2px solid black;
@@ -157,16 +176,17 @@
 	.tileBtn {
 		display: flex;
 		padding: 1px;
-        min-width: 3rem;
-        min-height: 3rem;
-        aspect-ratio: 1/1;
+		min-width: 3rem;
+		min-height: 3rem;
+		aspect-ratio: 1/1;
 		margin-right: 10px;
 	}
-	
-    .algoBtn {
+
+	.algoBtn {
 		display: flex;
 		padding: 1px;
 		margin-right: 10px;
+		aspect-ratio: 1/1;
 	}
 
 	.visualize {
@@ -176,8 +196,8 @@
 		color: white;
 		border: 2px solid black;
 		transition: 150ms ease-in-out;
-        max-width: 35%;
-        margin: 0 auto;
+		max-width: 35%;
+		margin: 0 auto;
 	}
 
 	.visualize:hover {
@@ -193,17 +213,17 @@
 		animation: fadeIn 800ms;
 	}
 
-    @media (max-width: 768px) {
-        .controls {
-            flex-direction: column;
-        }
-        .visualize {
-            margin: 10px auto;
-        }
-        .algoBtn {
-            min-height: 3rem;
-        }
-    }
+	@media (max-width: 768px) {
+		.controls {
+			flex-direction: column;
+		}
+		.visualize {
+			margin: 10px auto;
+		}
+		.algoBtn {
+			min-height: 3rem;
+		}
+	}
 
 	@keyframes fadeIn {
 		from {

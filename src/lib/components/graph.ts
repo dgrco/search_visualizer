@@ -94,66 +94,68 @@ export function setTile(pos: Coordinate, tile: Tile) {
     updateData(graph);
 }
 
-// set parent of node
+/** Set parent of node */
 export function setParent(node: GridNode, parent: GridNode) {
     graph.nodes[node.xy.y][node.xy.x].parent = parent;
 }
 
-// sets a cell to become a wall
+/** Sets a node at `pos` to become a wall */
 export function setWall(pos: Coordinate) {
     graph.nodes[pos.y][pos.x].tile = Tile.Wall;
 }
 
-// sets a cell to become empty
+/** Sets a node at `pos` to empty */
 export function setEmpty(pos: Coordinate) {
     graph.nodes[pos.y][pos.x].tile = Tile.Empty;
 }
 
-// get node at position pos
+/** Get node at position `pos` */
 export function getNode(pos: Coordinate): GridNode {
     return graph.nodes[pos.y][pos.x];
 }
 
-// get node at position (x,y)
+/** Get node at position (x, y) */
 export function getNodeXY(x: number, y: number): GridNode {
     return graph.nodes[y][x];
 }
 
-// returns xy of start node
+/** Returns the start node */
 export function getStart() {
     return graph.nodes[graph.start.y][graph.start.x];
 }
 
-// sets the start position
+/** Sets the start position */
 export function setStart(pos: Coordinate) {
     setTile(getStart().xy, Tile.Empty);
     graph.start = pos;
     setTile(pos, Tile.Start);
 }
 
-// returns xy of end node
+/** Returns the end node */
 export function getEnd() {
     return graph.nodes[graph.end.y][graph.end.x];
 }
 
-// sets the end position
+/** Sets the end position */
 export function setEnd(pos: Coordinate) {
     setTile(getEnd().xy, Tile.Empty);
     graph.end = pos;
     setTile(pos, Tile.End);
 }
 
-// return the number of rows
+/** Return the number of rows in the graph. */
 export function getRows() {
     return graph.nodes.length;
 }
 
-// return the number of columns
+/** Returns the number of columns in the graph */
 export function getCols() {
     return graph.nodes[0].length;
 }
 
-// get all surrounding neighbours of node
+/** 
+    * Get all surrounding neighbours of node
+*/
 export function getNeighbours(node: GridNode): Array<GridNode> {
     let { x, y } = node.xy;
     let neighbours: Array<GridNode> = [];
@@ -162,8 +164,8 @@ export function getNeighbours(node: GridNode): Array<GridNode> {
     } else if (x == graph.nodes[0].length - 1) {
         neighbours.push(getNodeXY(x - 1, y));
     } else {
-        neighbours.push(getNodeXY(x + 1, y));
         neighbours.push(getNodeXY(x - 1, y));
+        neighbours.push(getNodeXY(x + 1, y));
     }
 
     if (y == 0) {
@@ -171,8 +173,8 @@ export function getNeighbours(node: GridNode): Array<GridNode> {
     } else if (y == graph.nodes.length - 1) {
         neighbours.push(getNodeXY(x, y - 1));
     } else {
-        neighbours.push(getNodeXY(x, y + 1));
         neighbours.push(getNodeXY(x, y - 1));
+        neighbours.push(getNodeXY(x, y + 1));
     }
 
     return neighbours;

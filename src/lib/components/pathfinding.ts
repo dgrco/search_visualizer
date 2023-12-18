@@ -7,6 +7,7 @@ import PriorityQueue, { type SearchNode } from "./priorityqueue";
 export enum Algorithm {
     BFS,
     A_STAR,
+    DFS,
 };
 
 export function run(algo: Algorithm): Array<GridNode> {
@@ -17,6 +18,9 @@ export function run(algo: Algorithm): Array<GridNode> {
             break;
         case Algorithm.A_STAR:
             search = a_star();
+            break;
+        case Algorithm.DFS:
+            search = dfs();
             break;
     }
 
@@ -96,6 +100,44 @@ function a_star(): Array<GridNode> {
                 if (pqueue.decreaseKey(pqueue.getData()[nodeIdx], cum_gCost, hCost)) { 
                     neighbour.parent = current!.node;
                 }
+            }
+        }
+    }
+
+    return visited;
+}
+
+// Depth-First Search algorithm
+function dfs(): Array<GridNode> {
+    let startNode = getStart()
+    let visited: Array<GridNode> = [];
+    let arr = [startNode];
+
+    while (arr.length > 0) {
+        let node = arr.pop();
+
+        if (node == undefined) {
+            console.log("Undefined node in search");
+            break;
+        }
+
+        if (inArray(visited, node)) {
+            continue;
+        }
+
+        // mark node as expanded
+        visited.push(node);
+
+        if (node == getEnd()) {
+            break;
+        }
+
+        let neighbours = getNeighbours(node);
+        for (let i = 0; i < neighbours.length; i++) {
+            if (neighbours[i].tile == Tile.Wall) { continue; }
+            if (!inArray(visited, neighbours[i])) {
+                setParent(neighbours[i], node);
+                arr.push(neighbours[i]);
             }
         }
     }
